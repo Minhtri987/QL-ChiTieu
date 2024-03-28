@@ -1,0 +1,115 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    bool isAuthenticated = !string.IsNullOrEmpty(Context.Session.GetString("Email"));
+}
+@{
+    List<Object> menuItems = new List<Object>();
+
+    menuItems.Add(new
+    {
+        text = "General",
+        separator = true,
+    });
+    menuItems.Add(new
+    {
+        text = "Tổng quan",
+        url = "/",
+        iconCss = "fa-solid fa-box",
+    });
+    menuItems.Add(new
+    {
+        text = "Danh mục",
+        url = "/Category",
+        iconCss = "fa-solid fa-folder-closed",
+    });
+    menuItems.Add(new
+    {
+        text = "Giao dịch",
+        iconCss = "fa-solid fa-arrow-right-arrow-left",
+        url = "/Transaction"
+    });
+
+    menuItems.Add(new
+    {
+        text = "Extras",
+        separator = true,
+    });
+    menuItems.Add(new
+    {
+        text = "Dự Toán",
+        iconCss = "fa-solid fa-chart-simple",
+        url = "/StockDetect/Predict"
+    });
+    menuItems.Add(new
+    {
+        text = "Ước tính chi tiêu",
+        iconCss = "fa-solid fa-chart-simple",
+        url = "/Transaction/LinearRegression"
+    });
+    menuItems.Add(new
+    {
+        text = "Biểu đồ dự toán",
+        iconCss = "fa-solid fa-chart-simple",
+        url = "/Transaction/DrawChart"
+    });
+}
+
+
+<ejs-sidebar id="sidebar" width="290px" enableDock dockSize="100px"
+             target=".dock-target" enableGestures="false">
+    <e-content-template>
+
+        <div class="logo-wrapper">
+            <a href="@Url.Action("Index", "Dashboard")">
+                <div class="app-logo">
+                    <img src="~/logo.png" />
+                </div>
+            </a>
+            <div class="w-100"></div>
+            <i id="sidebar-toggler" class="fa-solid"></i>
+        </div>
+
+        <div class="profile-wrapper">
+            @if (isAuthenticated)
+            {
+                var profilePhotoPath = Context.Session.GetString("ProfilePhotoPath");
+                var profileImageSrc = string.IsNullOrEmpty(profilePhotoPath) ? "~/uploads/default.jpg" : Url.Content($"~{profilePhotoPath}");
+                <a href="@Url.Action("Profile", "Profile")"><img id="profile-image" class="profile-pic" src="@profileImageSrc" alt="Profile Photo" /></a>
+            }
+            else
+            {
+                <img class="profile-pic" src="~/uploads/default.jpg" alt="Default Profile Photo" />
+            }
+            <div class="titles d-flex flex-column ps-3">
+                <h6 class="mb-0">Quản Lý Chi Tiêu</h6>
+                @if (isAuthenticated)
+                {
+                    var userFullName = Context.Session.GetString("FullName");
+                    var userNameSrc = string.IsNullOrEmpty(userFullName) ? "Guest" : userFullName;
+                    <span class="text-muted" style="font-size:16px" alt="Logged In User">@userNameSrc</span>
+                }
+                else
+                {
+                    <span class="text-muted" style="font-size:16px" alt="Default User">Guest</span>
+                }
+            </div>
+        </div>
+
+        <ejs-menu id="menu"
+                  items="menuItems"
+                  orientation="Vertical"
+                  hamburgerMode></ejs-menu>
+    </e-content-template>
+</ejs-sidebar>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        dockBar = document.getElementById('sidebar').ej2_instances[0];
+        document.getElementById('sidebar-toggler').onclick = function () {
+            dockBar.toggle();
+        };
+    });
+
+</script>

@@ -1,0 +1,170 @@
+﻿@model LinearRegression
+
+<h1> Dự đoán số tiền bạn sẽ chi tiêu </h1>
+<div class="row">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label asp-for="CategoryId" class="control-label">Choose Category: </label>
+                <select asp-for="CategoryId" class="form-control">
+                    <option value="1">Ăn uống 🍷</option>
+                    <option value="2">Hóa đơn & Tiện ích 🧾</option>
+                    <option value="3">Thuê nhà 🏚️</option>
+                    <option value="4">Mua sắm 🛒</option>
+                    <option value="5">Sức khỏe 🏥</option>
+                    <option value="6">Giáo dục 🎓</option>
+                    <option value="7">Giải trí 🎮</option>
+                    <option value="8">Di chuyển 🛵</option>
+                    <option value="9">Vật nuôi 🐶</option>
+                    <option value="10">Đồ dùng cá nhân 📱</option>
+                    <option value="11">Lương 💵</option>
+                    <option value="12">Thu nhập khác 💶</option>
+                </select>
+            </div>
+            <div class="form-group col-md-4">
+                @using (Html.BeginForm("LinearRegression", "Transaction", FormMethod.Post))
+                {
+                    <div class="form-group">
+                        <label class="control-label"></label>
+                        <input type="number" id="CategoryIdInput" type="hidden" name="CategoryId" class="form-control" required asp-for="CategoryId" />
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="submitBtn">Submit</button>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr />
+
+<h3>Linear Regression Results</h3>
+
+    @if (Model.CategoryId != 0 && Model.UserId != 0)
+    {
+        <p>Tháng sau bạn có thể dùng: @((Model.AverageAmount * 30).ToString("C", new System.Globalization.CultureInfo("vi-VN")))</p>
+        <p>Tính ra một ngày bạn có thể dùng: @Model.AverageAmount.ToString("C", new System.Globalization.CultureInfo("vi-VN"))/ngày</p>
+        <button type="button" class="btn btn-secondary" id="goToDrawChartBtn">
+            Xem biểu đồ
+        </button>
+
+        <!-- JavaScript để vẽ biểu đồ -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            $(document).ready(function () {
+                // Sự kiện nhấn nút submit
+                $('#submitBtn').on('click', function () {
+                    // Gửi yêu cầu Ajax để lấy dữ liệu
+                    $.ajax({
+                        url: '@Url.Action("GetChartData", "Transaction")',// Điều chỉnh URL tùy theo định dạng route của bạn
+                        type: 'POST',
+                        data: { categoryId: $('#CategoryId').val() },
+                        success: function (data) {
+                            // Vẽ biểu đồ khi nhận được dữ liệu
+                            drawChart(data);
+                        }
+                    });
+                });
+
+                // Sự kiện nhấn nút quy đổi
+                $('#newButton').on('click', function () {
+                    var selectedCategory = $('#CategoryId').val();
+                    var predictedNumber = getPredictedNumber(selectedCategory);
+                    $('#resultContainer').text("Số dự đoán: " + predictedNumber);
+                });
+
+                // Hàm vẽ biểu đồ
+                function drawChart(data) {
+                    var chartData = data.chartData;
+
+                    // Vẽ biểu đồ bằng thư viện Chart.js
+                    var ctx = document.getElementById('myChart').getContext('2d');
+                    var myChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: chartData.map(item => item.Index),
+                            datasets: [{
+                                label: 'Amount',
+                                data: chartData.map(item => item.Amount),
+                                borderColor: 'rgb(75, 192, 192)',
+                                borderWidth: 1,
+                                fill: false
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false
+                        }
+                    });
+                }
+            });
+        </script>
+    }
+
+    <script>
+        document.getElementById('submitBtn').addEventListener('click', function () {
+            var categoryId = document.getElementById('CategoryId').value;
+
+            // Nếu Category ID là 1, vẽ biểu đồ
+            if (categoryId == 1) {
+                drawChart();
+            }
+        });
+
+        document.getElementById('goToDrawChartBtn').addEventListener('click', function () {
+            // Chuyển hướng qua trang /Transaction/DrawChart
+            window.location.href = '/Transaction/DrawChart';
+        });
+
+        function drawChart() {
+            var ctx = document.getElementById('myChart').getContext('2d');
+            var chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Point 1', 'Point 2', 'Point 3', 'Point 4', 'Point 5'],
+                    datasets: [{
+                        label: 'Category ID 1',
+                        data: [0, 1, 2, 3, 4],
+                        borderColor: 'rgb(75, 192, 192)',
+                        borderWidth: 2,
+                        fill: false
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+ @section scripts {
+    <script>
+        $(document).ready(function () {
+        function updateCategoryId(selectedCategory) {
+            // Update the CategoryId input
+            $('#CategoryIdInput').val(selectedCategory);
+        }
+        var lastSelectedCategory = sessionStorage.getItem('lastSelectedCategory');
+
+        // Use the stored Category ID or default to 1
+        var selectedCategory = lastSelectedCategory || 1;
+
+        // Update the Category ID on page load
+        updateCategoryId(selectedCategory);
+
+        // Handle the change event for CategoryId
+        $('#CategoryId').on('change', function () {
+            var selectedCategory = $(this).val();
+
+            // Update the stored Category ID in session storage
+            sessionStorage.setItem('lastSelectedCategory', selectedCategory);
+
+            // Update the Category ID and trigger chart drawing
+            updateCategoryId(selectedCategory);
+        });
+    });
+    </script>
+}

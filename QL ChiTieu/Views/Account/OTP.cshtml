@@ -1,0 +1,24 @@
+﻿@model QL_ChiTieu.Models.User
+
+@{
+    ViewData["Title"] = "Confirm OTP";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 style="font-weight:bolder">XÁC NHẬN OTP</h2>
+
+@if (!string.IsNullOrEmpty(ViewBag.Error))
+{
+    <p style="color: red;">@ViewBag.Error</p>
+}
+<form method="post">
+    <div class="form-group">
+        <label for="OTP">Vui lòng nhập OTP được gửi vào mail</label>
+        <p style="font-weight:600">@ViewBag.Email</p>
+        <input type="text" class="form-control" id="OTP" style="width: 200px;" name="OTP" required>
+        <span asp-validation-for="OTP" class="text-danger"></span>
+    </div>
+    <input type="hidden" name="email" value="@ViewBag.Email" />
+    <p></p>
+    <button type="submit" class="btn btn-primary">Xác thực OTP</button>
+</form>

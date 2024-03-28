@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>QL_ChiTieu</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Accord" Version="3.8.0" />
+    <PackageReference Include="Angular.UI.Bootstrap" Version="2.5.0" />
+    <PackageReference Include="EntityFramework" Version="6.4.4" />
+    <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="6.0.25" />
+    <PackageReference Include="Microsoft.ML" Version="2.0.1" />
+    <PackageReference Include="Microsoft.ML.Recommender" Version="0.19.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Contracts" Version="5.0.2" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.16" />
+    <PackageReference Include="OpenAI" Version="1.8.0" />
+    <PackageReference Include="Syncfusion.EJ2.AspNet.Core" Version="23.1.38" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="Views\Dashboard\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup Label="MLModel3">
+    <None Include="MLModel3.consumption.cs">
+      <DependentUpon>MLModel3.mbconfig</DependentUpon>
+    </None>
+    <None Include="MLModel3.training.cs">
+      <DependentUpon>MLModel3.mbconfig</DependentUpon>
+    </None>
+    <None Include="MLModel3.zip">
+      <DependentUpon>MLModel3.mbconfig</DependentUpon>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>

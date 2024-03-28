@@ -1,0 +1,18 @@
+﻿@if (!string.IsNullOrEmpty(ViewData["Message"] as string))
+{
+    <p id="message">@ViewData["Message"]</p>
+
+    <script>
+        function delayedRedirect(url, delay) {
+            setTimeout(function () {
+                window.location.href = url;
+            }, delay);
+        }
+        var message = document.getElementById('message').innerText;
+        if (message.includes("Thông báo đã được gửi đến")) {
+            delayedRedirect('/Account/OTP?email=@ViewData["Email"]', 1500);
+        } else {
+            delayedRedirect('/forgot-password', 1500);
+        }
+    </script>
+}

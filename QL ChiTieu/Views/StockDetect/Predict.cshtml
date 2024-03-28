@@ -1,0 +1,134 @@
+﻿@model MLModel3.ModelInput
+@{
+    ViewData["Title"] = "Predict";
+
+}
+<h1> Dự đoán số tiền bạn sẽ chi tiêu </h1>
+<hr />
+<div class="row">
+    <div class="col-md-12">
+        <form asp-action="Predict">
+            <div class="row">
+                <div class="form-group col-md-4">
+                    <label asp-for="CategoryId" class="control-label">Choose Category: </label>
+                    <select asp-for="CategoryId" class="form-control">
+                        <option value="1">Ăn uống 🍷</option>
+                        <option value="2">Hóa đơn & Tiện ích 🧾</option>
+                        <option value="3">Thuê nhà 🏚️</option>
+                        <option value="4">Mua sắm 🛒</option>
+                        <option value="5">Sức khỏe 🏥</option>
+                        <option value="6">Giáo dục 🎓</option>
+                        <option value="7">Giải trí 🎮</option>
+                        <option value="8">Di chuyển 🛵</option>
+                        <option value="9">Vật nuôi 🐶</option>
+                        <option value="10">Đồ dùng cá nhân 📱</option>
+                        <option value="11">Lương 💵</option>
+                        <option value="12">Thu nhập khác 💶</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="TransactionId" class="control-label">Transaction ID: </label>
+                    @* <input asp-for="TransactionId" class="form-control" /> *@
+                    <select asp-for="TransactionId" class="form-control" id="TransactionId">
+                    </select>
+                    <input asp-for="CategoryId" id="CategoryIdInput" type="hidden" class="form-control" value="" />
+                </div>
+                <div class="form-group col-md-4">
+                    <input asp-for="Amount" type="hidden" id="Amount" class="form-control" readonly />
+                </div>
+            </div>
+            <hr />
+            <div class="form-group col-md-4 text-left">
+                <label class="control-label"></label>
+                <input type="submit" value="Dự đoán" class="btn btn-primary" />
+            </div>
+        </form>
+        <hr />
+    </div>
+
+</div>
+@if (ViewBag.Result != null)
+{
+    <div class="row">
+        <div class="col-md-12">
+            <h2 style="color:#103f62">Dự toán chi tiêu:  </h2>
+            @if (ViewBag.Result.Score != null)
+            {
+                var formattedScore = ((decimal)ViewBag.Result.Score).ToString("C", new System.Globalization.CultureInfo("vi-VN"));
+                <p class="card-text text-center">@formattedScore</p>
+            }
+        </div>
+    </div>
+    <hr />
+}
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            // Function to update Transaction IDs based on the selected category
+            function updateTransactionIds(selectedCategory) {
+                $.ajax({
+                    url: '/StockDetect/GetTransactionIds',
+                    type: 'GET',
+                    data: { categoryId: selectedCategory },
+                    success: function (data) {
+                        var transactionIdDropdown = $('#TransactionId');
+                        transactionIdDropdown.empty();
+                        $.each(data, function (index, item) {
+                            transactionIdDropdown.append($('<option>', {
+                                value: item.value,
+                                text: item.text
+                            }));
+                        });
+
+                        // Retrieve the last selected Transaction ID from session storage
+                        var lastSelectedTransactionId = sessionStorage.getItem('lastSelectedTransactionId');
+                        if (lastSelectedTransactionId) {
+                            transactionIdDropdown.val(lastSelectedTransactionId);
+                        }
+
+                        // Trigger the change event for TransactionId to update the Amount input
+                        transactionIdDropdown.trigger('change');
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+            }
+
+            // Function to update Amount based on the selected Transaction ID
+            function updateAmount(selectedTransactionId) {
+                $.ajax({
+                    url: '/StockDetect/GetAmountForTransaction',
+                    type: 'GET',
+                    data: { transactionId: selectedTransactionId },
+                    success: function (data) {
+                        // Update the Amount input with the returned data
+                        $('#Amount').val(data);
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+            }
+
+            // Handle the change event for CategoryId
+            $('#CategoryId').on('change', function () {
+                var selectedCategory = $(this).val();
+                updateTransactionIds(selectedCategory);
+            });
+
+            // Handle the change event for TransactionId
+            $('#TransactionId').on('change', function () {
+                var selectedTransactionId = $(this).val();
+                updateAmount(selectedTransactionId);
+
+                // Store the selected Transaction ID in session storage
+                sessionStorage.setItem('lastSelectedTransactionId', selectedTransactionId);
+            });
+
+            // Trigger the change event for CategoryId to load Transaction IDs with default Category ID (1)
+            $('#CategoryId').trigger('change');
+        });
+    </script>
+}

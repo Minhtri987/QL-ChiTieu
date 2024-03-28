@@ -1,0 +1,113 @@
+﻿@model QL_ChiTieu.Models.Category
+
+@{
+    ViewData["PageTitle"] = Model.CategoryId == 0 ? "Create a new category" : "Edit category";
+}
+
+
+<div class="row">
+    <div class="col-md-7">
+        <div class="widget p-5" style="background-color:#212b36">
+            <form asp-action="AddOrEdit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" name="CategoryId" value="@Model.CategoryId" />
+                <div class="mb-3">
+                    <div class='e-btn-group custom-rbt-group'>
+                        <input type="radio" id="radioleft" name="Type" value="Chi tiêu" checked="@(Model.Type=="Expense")" />
+                        <label class="e-btn" for="radioleft">Chi tiêu</label>
+                        <input type="radio" id="radiomiddle" name="Type" value="Thu nhập" checked="@(Model.Type=="Income")" />
+                        <label class="e-btn" for="radiomiddle">Thu nhập</label>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <ejs-textbox id="title" placeholder="Title" ejs-for="Title" floatLabelType="Always"></ejs-textbox>
+                    <span asp-validation-for="Title" class="text-danger fs-6"></span>
+                </div>
+                <div class="mb-3">
+                    <ejs-textbox id="icon" placeholder="Icon" ejs-for="Icon" floatLabelType="Always"></ejs-textbox>
+                </div>
+                <ejs-button id="submit" type="submit" content="Submit" cssClass="e-success"></ejs-button>
+            </form>
+        </div>
+        <div class="mb-3">
+            <label for="suggestionList">Gợi ý:</label>
+            <div class="button-group">
+                <button data-value="🍕 Tiền ăn">🍕 Tiền ăn</button>
+                <button data-value="💵 Tiền lương">💵 Tiền lương</button>
+                <button data-value="🏠 Tiền nhà">🏠 Tiền nhà</button>
+                <button data-value="💡 Tiền điện">💡 Tiền điện</button>
+                <button data-value="🛒 Tiền mua sắm"></i>🛒 Tiền mua sắm</button>
+                <button data-value="💸 Tiền tiết kiệm">💸 Tiền tiết kiệm</button>
+            </div>
+        </div>
+
+
+    </div>
+    <div class="col-md-5">
+        <div class="widget h-100 d-flex justify-content-center align-items-center">
+            <i class="fa-solid fa-shapes fa-2xl"></i>
+        </div>
+    </div>
+</div>
+
+<style>
+    .button-group {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+        .button-group button {
+            display: flex;
+            align-items: center;
+            margin: 5px;
+            padding: 10px;
+            cursor: pointer;
+            border: none;
+            background-color: #3498db;
+            color: #ffffff;
+            border-radius: 5px;
+            transition: background-color 0.3s ease; /* Hiệu ứng chuyển động màu nền */
+        }
+
+            .button-group button:hover {
+                background-color: #2980b9; /* Màu nền khi di chuột vào nút */
+            }
+
+            .button-group button i {
+                margin-right: 5px;
+            }
+
+</style>
+
+<script>
+    var buttons = document.querySelectorAll('.button-group button');
+    var titleTextbox = document.getElementById('title');
+    var iconTextbox = document.getElementById('icon');
+    var selectedIcon = document.getElementById('selectedIcon');
+
+    buttons.forEach(function (button) {
+        button.addEventListener('click', function () {
+            var value = this.getAttribute('data-value');
+
+            if (value) {
+                var values = value.split(' ');
+
+                if (values.length >= 1) {
+                    iconTextbox.value = values[0];
+                }
+                if (values.length >= 2) {
+                    titleTextbox.value = values.slice(1).join(' ');
+                }
+            }
+        });
+    });
+</script>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+@*@section Scripts {
+    @{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
+}*@

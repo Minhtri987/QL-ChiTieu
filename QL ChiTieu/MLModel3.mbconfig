@@ -1,0 +1,138 @@
+﻿{
+  "TrainingTime": 60,
+  "Scenario": "Recommendation",
+  "DataSource": {
+    "Type": "SQL",
+    "Version": 1,
+    "ColumnProperties": [
+      {
+        "ColumnName": "TransactionId",
+        "ColumnPurpose": "User",
+        "ColumnDataFormat": "Single",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 2
+      },
+      {
+        "ColumnName": "CategoryId",
+        "ColumnPurpose": "Item",
+        "ColumnDataFormat": "Single",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 2
+      },
+      {
+        "ColumnName": "Amount",
+        "ColumnPurpose": "Label",
+        "ColumnDataFormat": "Single",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 2
+      },
+      {
+        "ColumnName": "Note",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "String",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 2
+      },
+      {
+        "ColumnName": "Date",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "DateTime",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 2
+      },
+      {
+        "ColumnName": "idUser",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "Single",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 2
+      },
+      {
+        "ColumnName": "UseridUser",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "Single",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 2
+      }
+    ],
+    "ConnectionString": "Data Source=LAPTOP-EORA5U2H;Initial Catalog=TransactionDB;Integrated Security=True",
+    "CommandString": "SELECT CAST(TransactionId as REAL), CAST(CategoryId as REAL), CAST(Amount as REAL), Note, Date, CAST(idUser as REAL), CAST(UseridUser as REAL) FROM [dbo].[Transactions]",
+    "DatabaseName": "TransactionDB",
+    "SelectedTableDbo": "dbo",
+    "TableName": "Transactions"
+  },
+  "Environment": {
+    "Type": "LocalCPU",
+    "Version": 1
+  },
+  "RunHistory": {
+    "Version": 1,
+    "Type": "Result",
+    "Trials": [
+      {
+        "Version": 0,
+        "Type": "Trial",
+        "TrainerName": "MatrixFactorization",
+        "Score": 0.0,
+        "RuntimeInSeconds": 8.324000358581543
+      },
+      {
+        "Version": 0,
+        "Type": "Trial",
+        "TrainerName": "MatrixFactorization",
+        "Score": 0.0,
+        "RuntimeInSeconds": 1.8960000276565552
+      },
+      {
+        "Version": 0,
+        "Type": "Trial",
+        "TrainerName": "MatrixFactorization",
+        "Score": 0.0,
+        "RuntimeInSeconds": 29.249000549316406
+      },
+      {
+        "Version": 0,
+        "Type": "Trial",
+        "TrainerName": "MatrixFactorization",
+        "Score": 0.0,
+        "RuntimeInSeconds": 2.0109999179840088
+      }
+    ],
+    "Pipeline": {
+      "parameter": {
+        "0": {
+          "OutputColumnName": "CategoryId",
+          "InputColumnName": "CategoryId"
+        },
+        "1": {
+          "OutputColumnName": "TransactionId",
+          "InputColumnName": "TransactionId"
+        },
+        "2": {
+          "LabelColumnName": "Amount",
+          "MatrixColumnIndexColumnName": "TransactionId",
+          "MatrixRowIndexColumnName": "CategoryId",
+          "ApproximationRank": 19,
+          "LearningRate": 1.0,
+          "NumberOfIterations": 127,
+          "Quiet": true
+        }
+      },
+      "estimators": [
+        "MapValueToKey",
+        "MapValueToKey",
+        "MatrixFactorization"
+      ]
+    },
+    "MetricName": "RSquared"
+  },
+  "Type": "TrainingConfig",
+  "Version": 2
+}

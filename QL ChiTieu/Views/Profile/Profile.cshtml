@@ -1,0 +1,126 @@
+﻿@model QL_ChiTieu.Models.User
+<div class="profile-box">
+    <h1 class="profile-heading">Hồ sơ cá nhân</h1>
+
+    @if (!string.IsNullOrEmpty(Model.ProfilePhotoPath))
+    {
+        <img src="@Model.ProfilePhotoPath" alt="Profile Photo" class="profile-photo" />
+    }
+    <!-- Các thông tin khác của người dùng -->
+    <h2 class="welcome-message">Chào mừng, @Model.FirstName @Model.LastName </h2>
+    <p class="email-info">Email: @Model.Email</p>
+
+    <!-- Nút chỉnh sửa hồ sơ -->
+    <a asp-action="EditProfile" asp-controller="Profile" class="edit-profile-btn">Chỉnh sửa hồ sơ</a>
+
+    <!-- Form để tải lên ảnh mới -->
+    <form method="post" enctype="multipart/form-data" asp-controller="Profile" asp-action="EditAvatar">
+        <input type="file" name="avatarFile" accept="image/*" />
+        <button type="submit">Tải lên</button>
+    </form>
+</div>
+<script>
+    var avatarUpdated = @(Json.Serialize(TempData["AvatarUpdated"]));
+
+    // Reload the page if the avatar was updated
+    if (avatarUpdated) {
+        // Force reload of images in layout and sidebar
+        var profileImage = document.getElementById('profile-image');
+        if (profileImage) {
+            profileImage.src = profileImage.src + '?' + new Date().getTime();
+        }
+
+        // Add similar lines for other images if needed
+
+        location.reload();
+    }
+</script>
+<style>
+    /* CSS Styles */
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    .profile-box {
+        width: 60%;
+        margin: 20px auto;
+        background-color: #000000;
+        border: 1px solid #000000;
+        border-radius: 5px;
+        padding: 30px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow */
+    }
+
+    .profile-heading {
+        color: #007bff;
+        font-size: 32px;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .profile-photo {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        display: block;
+        margin: 0 auto 15px;
+        object-fit: cover; /* Maintain aspect ratio */
+    }
+
+    .welcome-message {
+        font-size: 24px;
+        color: #007bff;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+
+    .email-info {
+        color: #666;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .edit-profile-btn {
+        display: block;
+        width: 150px;
+        margin: 0 auto;
+        padding: 10px 0;
+        font-size: 16px;
+        text-align: center;
+        text-decoration: none;
+        background-color: #007bff;
+        color: #fff;
+        border-radius: 5px;
+    }
+
+        .edit-profile-btn:hover {
+            background-color: #0056b3;
+        }
+
+    input[type="file"] {
+        display: block;
+        margin: 0 auto;
+        margin-top: 20px;
+    }
+
+    button[type="submit"] {
+        display: block;
+        margin: 10px auto;
+        padding: 8px 16px;
+        font-size: 16px;
+        text-align: center;
+        text-decoration: none;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+</style>

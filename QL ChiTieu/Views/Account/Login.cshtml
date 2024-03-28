@@ -1,0 +1,61 @@
+﻿@model QL_ChiTieu.Models.User
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
+@{
+    ViewBag.Title = "Login";
+}
+<h2>Login</h2>
+<div class="row justify-content-md-center">
+    <aside class="col-sm-4">
+        <div class="card">
+            <div class="card-body">
+                @using (Html.BeginForm("Login", "Account", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        <label class="form-label" for="Email">Email</label>
+                        @Html.TextBoxFor(m => m.Email, "", new { @class = "form-control", @placeholder = "Email" })
+                    </div>
+
+                    <p></p>
+                    <div class="form-group">
+                        <label class="form-label" for="Password">Password</label>
+                        @Html.PasswordFor(m => m.Password, new { @class = "form-control", @placeholder = "Password" })
+                    </div>
+                    <p></p>
+                    <div class="form-group d-flex justify-content-between align-items-center">
+                        <input type="submit" name="submit" class="btn btn-primary" value="Login" />
+                        <button type="button" style="color:white;text-decoration:none" class=" btn btn-link btn-primary" onclick="location.href='@Url.Action("ForgotPassword", "Account")'">Forgot Password?</button>
+                        <a href="/Account/Register" style="color:white" class="float-right btn btn-primary">Sign up</a>
+                    </div>
+                    <div class="form-group">
+                        
+                    </div>
+                }
+            </div>
+            <style>
+                .card {
+                    margin-right: auto;
+                    margin-left: auto;
+                    width: 400px;
+                    height: 275px;
+                    background-color: transparent;
+                    padding: 10px;
+                    text-align: center;
+                }
+                .card .card-body .form-group{
+                    background-color:transparent;
+                }
+                .btn-100{width:200px;}
+
+                .form-label {
+                    display: block;
+                    font-weight: bold;
+                    margin-bottom: 5px;
+                    text-align: center;
+                }
+            </style>
+        </div>
+    </aside>
+</div>

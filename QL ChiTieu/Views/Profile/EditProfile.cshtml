@@ -1,0 +1,49 @@
+﻿@model QL_ChiTieu.Models.User
+
+@{
+    ViewData["Title"] = "Edit Profile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Chỉnh sửa hồ sơ</h2>
+
+@if (ViewData.ModelState.IsValid == false)
+{
+    <div class="alert alert-danger" role="alert">
+        Có vấn đề khi thay đổi thông tin. Vui lòng kiểm tra các lỗi bên dưới!
+    </div>
+}
+
+<form asp-action="EditProfile" method="post">
+    <div class="form-group">
+        <label for="FirstName">First Name</label>
+        <input type="text" class="form-control" id="FirstName" name="FirstName" value="@Model.FirstName" required>
+    </div>
+
+    <div class="form-group">
+        <label for="LastName">Last Name</label>
+        <input type="text" class="form-control" id="LastName" name="LastName" value="@Model.LastName" required>
+    </div>
+
+    <hr />
+
+    <div class="form-group">
+        <label for="OldPassword">Mật khẩu cũ</label>
+        <input type="password" class="form-control" id="OldPassword" name="OldPassword" required>
+        <span asp-validation-for="OldPassword" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="NewPassword">Mật khẩu mới</label>
+        <input type="password" class="form-control" id="NewPassword" name="NewPassword" required>
+        <span asp-validation-for="NewPassword" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="ConfirmNewPassword">Xác nhận mật khẩu</label>
+        <input type="password" class="form-control" id="ConfirmNewPassword" name="ConfirmNewPassword" required>
+        <span asp-validation-for="ConfirmNewPassword" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+</form>

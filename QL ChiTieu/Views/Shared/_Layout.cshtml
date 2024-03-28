@@ -1,0 +1,161 @@
+﻿@using Microsoft.AspNetCore.Http
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Expense Tracker</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    @*<link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/20.1.55/material.css" />*@
+    <link href="https://cdn.syncfusion.com/ej2/20.1.55/bootstrap5-dark.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Expense_Tracker.styles.css" asp-append-version="true" />
+    <script src="https://cdn.syncfusion.com/ej2/20.1.55/dist/ej2.min.js"></script>
+</head>
+
+@{
+    bool isAuthenticated = !string.IsNullOrEmpty(Context.Session.GetString("Email"));
+    string loginLogoutText = isAuthenticated ? "Log out" : "Log in";
+    string loginLogoutUrl = isAuthenticated ? Url.Action("Logout", "Account") : Url.Action("Login", "Account");
+
+    string profileRegisterText = isAuthenticated ? "Profile" : "Register";
+    string profileRegisterUrl = isAuthenticated ? Url.Action("Profile", "Profile") : Url.Action("Register", "Account");
+}
+
+<body class="e-bigger">
+
+    <partial name="_SideBar" />
+
+    <div class="dock-target">
+
+        <nav class="navbar sticky-top">
+            <div class="container-fluid py-2 px-4">
+                <i class=""></i>
+                <div>
+                    @if (isAuthenticated)
+                    {
+                        <i class="fa-solid fa-message" id="messageIcon"></i>
+                    }
+                    <b class="profile-container">
+                        @if (isAuthenticated)
+                        {
+                            var profilePhotoPath = Context.Session.GetString("ProfilePhotoPath");
+                            var profileImageSrc = string.IsNullOrEmpty(profilePhotoPath) ? "~/uploads/default.jpg" : Url.Content($"~{profilePhotoPath}");
+                            <a href="@Url.Action("Profile", "Profile")"><img id="profile-image" class="profile-pic" src="@profileImageSrc" alt="Profile Photo" /></a>
+                        }
+                        else
+                        {
+                            <img class="profile-pic" src="~/uploads/default.jpg" alt="Default Profile Photo" />
+                        }
+                        <div class="profile-dropdown">
+                            <ul>
+                                <li><a href="@profileRegisterUrl" onclick="handleLogout()">@profileRegisterText</a></li>
+                                <li><a href="@loginLogoutUrl" onclick="handleLogout()">@loginLogoutText</a></li>
+                            </ul>
+
+                            <style>
+                                .profile-container {
+                                    position: relative;
+                                    cursor: pointer;
+                                }
+
+                                .profile-dropdown {
+                                    position: absolute;
+                                    top: 100%;
+                                    left: 50%;
+                                    transform: translateX(-50%) translateY(8%);
+                                    display: none;
+                                    background: transparent; /* Adjust transparency as needed */
+                                    backdrop-filter: blur(0px); /* Adjust the blur intensity as needed */
+                                    padding: 10px;
+                                }
+
+                                    .profile-dropdown ul {
+                                        list-style: none;
+                                        padding: 0;
+                                        margin: 0;
+                                    }
+
+                                    .profile-dropdown li {
+                                        margin-bottom: 10px;
+                                        width: 140px;
+                                    }
+
+                                    .profile-dropdown a {
+                                        text-decoration: none;
+                                        color: white;
+                                        display: block;
+                                        font-size: 22px;
+                                    }
+
+                                .profile-container:hover .profile-dropdown {
+                                    display: block;
+                                }
+                            </style>
+                        </div>
+                    </b>
+                </div>
+            </div>
+        </nav>
+
+
+        <div class="main-content">
+            <div class="container mt-5">
+                <div class="row justify-content-center">
+                    <div class="@(ViewData["isDashboard"] == null?"col-md-10":"col-md-12")">
+                        <main role="main" class="pb-3">
+                            @if (ViewData["isDashboard"] == null)
+                            {
+                                <div class="row">
+                                    <div class="col-md-7">
+                                        <div class="d-flex flex-column mb-5">
+                                            <div class="d-flex mb-1">
+                                                <div class="flex-grow-1">
+                                                    <h3 class="fw-bold">@ViewData["PageTitle"]</h3>
+                                                </div>
+                                                <div>
+                                                    @if (ViewData["PageActionText"] != null)
+                                                    {
+                                                        <a class="btn btn-success" href="@ViewData["PageActionUrl"]">
+                                                            @ViewData["PageActionText"]
+                                                        </a>
+                                                    }
+                                                </div>
+                                            </div>
+                                            <ejs-breadcrumb id="breadcrumb"
+                                                            separatorTemplate="@Html.Raw("<span class='fa-solid fa-angle-right'></span>")"></ejs-breadcrumb>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            @RenderBody()
+                        </main>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function redirectToProfile() {
+            window.location.href = "/Profile/Profile";
+        }
+    </script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        // Bắt sự kiện click trên biểu tượng
+        document.getElementById('messageIcon').addEventListener('click', function () {
+            // Chuyển hướng đến trang AIChat/Index2.html
+            window.location.href = '@Url.Action("AIChat", "Dashboard")';
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+    <ejs-scripts></ejs-scripts>
+</body>
+</html>
